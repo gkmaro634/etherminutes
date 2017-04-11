@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block title %}Edit Minutes{% endblock title %}
+
+{% block content %}
+    {% if minutes_id %}
+    <h3 class="page-header">Edit Minutes</h3>
+    <form action="{% url 'cms:minutes_mod' minutes_id=minutes_id %}" method="post" class="form-horizontal" role="form">
+    {% else %}
+    <h3 class="page-header">Create New Minutes</h3>
+    <form action="{% url 'cms:minutes_add' %}" method="post" class="form-horizontal" role="form">
+    {% endif %}
+      {% csrf_token %}
+      {{ form|bootstrap_horizontal }}
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary">submit</button>
+        </div>
+      </div>
+    </form>
+    <a href="{% url 'cms:minutes_list' %}" class="btn btn-default btn-sm">back</a>
+{% endblock content %}
