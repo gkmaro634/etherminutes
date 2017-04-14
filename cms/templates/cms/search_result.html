@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load bootstrap %}
+
+{% block title %}Search Result{% endblock title %}
+
+{% block extrahead %}
+<style>
+    .inner-addon {
+        position: relative;
+    }
+
+    /* style icon */
+    .inner-addon .glyphicon {
+      position: absolute;
+      padding: 10px;
+      pointer-events: none;
+    }
+
+    /* align icon */
+    .left-addon .glyphicon  { left:  0px;}
+    .right-addon .glyphicon { right: 0px;}
+
+    /* add padding  */
+    .left-addon input  { padding-left:  30px; }
+    .right-addon input { padding-right: 30px; }
+
+</style>
+{% endblock %}
+
+
+{% block content %}
+<h3 class="page-header">Search Result</h3>
+<form action="{% url 'cms:minutes_search' %}" method="post">
+  {% csrf_token %}
+  <div class="inner-addon right-addon">
+    <input type="text" class="form-control" name="search_word" value="{{search_word}}" />
+    <i class="glyphicon glyphicon-search"></i>
+  </div>
+</div>
+</form>
+
+
+<div class="show hit num area">
+  <h6>Hit: {{hitnum}}</h6>
+</div>
+{% for idx, result in search_results.items %}
+<div class="show search results area">
+<h4>{{result.name}}</h4>
+<a href="{{result.minutes_url}}">{{result.minutes_url}}</a>
+<h5>{{result.pad_content|safe}}</h5>
+<br>
+</div>
+{% endfor %}
+<a href="{% url 'cms:minutes_list' %}" class="btn btn-default btn-sm">back</a>
+{% endblock content %}
