@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^minutes/add/$', views.minutes_edit, name='minutes_add'),
     url(r'^minutes/mod/(?P<minutes_id>\d+)/$', views.minutes_edit, name='minutes_mod'),
     url(r'^minutes/del/(?P<minutes_id>\d+)/$', views.minutes_del, name='minutes_del'),
+    url(r'^minutes/search/$', views.minutes_search, name='minutes_search'),
 
 ]

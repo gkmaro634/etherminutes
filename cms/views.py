@@ -61,3 +61,30 @@ def minutes_del(request, minutes_id):
     except Exception as e:
         print(str(e))
     return redirect('cms:minutes_list')
+
+def minutes_search(request):
+    if request.method == 'GET':
+        return redirect('cms:minutes_list')
+    elif request.method == 'POST':
+        search_word = request.POST.get('search_word')
+        minutes_list = Minutes.objects.all().order_by('id')
+        search_results = {}
+        cnt = 0
+        for minutes in minutes_list:
+            padID = minutes.minutes_url.split('/')[-1]
+            pad_content = EP_CLIENT.getText(padID=padID)['text']
+            print(search_word in pad_content)
+            if search_word in pad_content:
+                tmp_l = pad_content.split(search_word)
+                bolded_search_word = '<span style="background-color: #ffff00;">'+search_word+'</span>'
+                out_pad_content = bolded_search_word.join(tmp_l)
+                search_results[cnt] = {}
+                search_results[cnt]['padID'] = padID
+                search_results[cnt]['name'] = minutes.name
+                search_results[cnt]['minutes_url'] = minutes.minutes_url
+                search_results[cnt]['pad_content'] = out_pad_content
+                cnt += 1
+
+        print(request.POST.get('search_word'))
+        return render(request, 'cms/search_result.html', dict(search_word=search_word, search_results=search_results, hitnum=cnt))
+    return redirect('cms:minutes_list')

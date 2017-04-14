@@ -1,6 +1,4 @@
 # Ether Minutes
-
-
 Simultaneous editable minutes by using etherpad-lite
 
 ## Getting started
