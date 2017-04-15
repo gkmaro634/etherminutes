@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from cms.models import Minutes
 from cms.forms import MinutesForm
 
-from etherpad_lite import EtherpadLiteClient
+from etherpad_lite import EtherpadLiteClient, EtherpadException
 import os
 from datetime import datetime
 
@@ -33,21 +33,34 @@ def minutes_edit(request, minutes_id=None):
         minutes = Minutes()
         dt = datetime.now()
         padID = dt.strftime('%Y%m%d%H%M%S')
+        all_padID = EP_CLIENT.listAllPads()['padIDs']
+        if padID in all_padID:
+            padID_suffix = 0
+            while True:
+                new_padID = padID + '%d' % padID_suffix
+                if new_padID in all_padID:
+                    padID_suffix += 1
+                else:
+                    padID = new_padID
+                    break
+        else:
+            pass
+
         pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), padID)
         minutes.minutes_url = pad_url
 
     if request.method == 'POST':
         form = MinutesForm(request.POST, instance=minutes)
         if form.is_valid():
-            minutes = form.save(commit=False)
-            minutes.save()
             try:
-                ret = EP_CLIENT.createPad(padID=padID)
-                # if ret == ...
+                EP_CLIENT.createPad(padID=padID)
                 EP_CLIENT.setHTML(padID=padID, html='<html></html>')
+
             except Exception as e:
                 print(str(e))
 
+            minutes = form.save(commit=False)
+            minutes.save()
             return redirect('cms:minutes_list')
     else:
         form = MinutesForm(instance=minutes)
