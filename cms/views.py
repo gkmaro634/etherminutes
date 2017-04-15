@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from cms.models import Minutes
 from cms.forms import MinutesForm
 
-from etherpad_lite import EtherpadLiteClient
+from etherpad_lite import EtherpadLiteClient, EtherpadException
 import os
 from datetime import datetime
 
@@ -32,22 +32,38 @@ def minutes_edit(request, minutes_id=None):
     else:
         minutes = Minutes()
         dt = datetime.now()
-        padID = dt.strftime('%Y%m%d%H%M%S')
+        #padID = dt.strftime('%Y%m%d%H%M%S')
+        padID = '20170415191054'
         pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), padID)
         minutes.minutes_url = pad_url
 
     if request.method == 'POST':
         form = MinutesForm(request.POST, instance=minutes)
         if form.is_valid():
-            minutes = form.save(commit=False)
-            minutes.save()
             try:
-                ret = EP_CLIENT.createPad(padID=padID)
-                # if ret == ...
+                EP_CLIENT.createPad(padID=padID)
                 EP_CLIENT.setHTML(padID=padID, html='<html></html>')
+            except EtherpadException:
+                minutes_url_suffix = 0
+                while True:
+                    try:
+                        new_padID = padID+'%d'%minutes_url_suffix
+                        pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), new_padID)
+                        minutes.minutes_url = pad_url
+                        EP_CLIENT.createPad(padID=new_padID)
+                        EP_CLIENT.setHTML(padID=new_padID, html='<html></html>')
+                        break
+                    except EtherpadException:
+                        minutes_url_suffix += 1
+                    except Exception as e:
+                        print(e)
+                        break
+
             except Exception as e:
                 print(str(e))
 
+            minutes = form.save(commit=False)
+            minutes.save()
             return redirect('cms:minutes_list')
     else:
         form = MinutesForm(instance=minutes)
