@@ -32,8 +32,20 @@ def minutes_edit(request, minutes_id=None):
     else:
         minutes = Minutes()
         dt = datetime.now()
-        #padID = dt.strftime('%Y%m%d%H%M%S')
-        padID = '20170415191054'
+        padID = dt.strftime('%Y%m%d%H%M%S')
+        all_padID = EP_CLIENT.listAllPads()['padIDs']
+        if padID in all_padID:
+            padID_suffix = 0
+            while True:
+                new_padID = padID + '%d' % padID_suffix
+                if new_padID in all_padID:
+                    padID_suffix += 1
+                else:
+                    padID = new_padID
+                    break
+        else:
+            pass
+
         pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), padID)
         minutes.minutes_url = pad_url
 
@@ -43,21 +55,6 @@ def minutes_edit(request, minutes_id=None):
             try:
                 EP_CLIENT.createPad(padID=padID)
                 EP_CLIENT.setHTML(padID=padID, html='<html></html>')
-            except EtherpadException:
-                minutes_url_suffix = 0
-                while True:
-                    try:
-                        new_padID = padID+'%d'%minutes_url_suffix
-                        pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), new_padID)
-                        minutes.minutes_url = pad_url
-                        EP_CLIENT.createPad(padID=new_padID)
-                        EP_CLIENT.setHTML(padID=new_padID, html='<html></html>')
-                        break
-                    except EtherpadException:
-                        minutes_url_suffix += 1
-                    except Exception as e:
-                        print(e)
-                        break
 
             except Exception as e:
                 print(str(e))
