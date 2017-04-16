@@ -28,7 +28,15 @@ SECRET_KEY = 'v_oc=eot+_7(p@t4ez0$ot+d+l$t9@32u0u-fw8$x)@fet!pcg'
 DEBUG = True
 
 #HOST_IP = socket.gethostbyname(socket.gethostname())
-HOST_IP = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
+nic_l = netifaces.interfaces()
+for nic in nic_l:
+    try:
+        tmp_ip = netifaces.ifaddresses(nic)[netifaces.AF_INET][0]['addr']
+        if tmp_ip.startswith('192'):
+            HOST_IP = tmp_ip
+    except Exception as e:
+        pass
+
 ALLOWED_HOSTS = [HOST_IP]
 
 
