@@ -20,7 +20,7 @@ $./run.sh
 
 (Another terminal)
 $cd (path/to/etherminutes)
-$python manage.py runserver
+$python manage.py runserver 0.0.0.0:8000
 
 ```
 then Access to http://127.0.0.1:8000/cms/minutes/
