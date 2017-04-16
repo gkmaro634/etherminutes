@@ -32,7 +32,7 @@ nic_l = netifaces.interfaces()
 for nic in nic_l:
     try:
         tmp_ip = netifaces.ifaddresses(nic)[netifaces.AF_INET][0]['addr']
-        if not tmp_ip.startswith('127'):
+        if tmp_ip.startswith('192'):
             HOST_IP = tmp_ip
     except Exception as e:
         pass
