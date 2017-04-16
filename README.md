@@ -7,7 +7,7 @@ Ether Minutes uses the following dependencies:
 - [python-etherpad_lite](https://github.com/Changaco/python-etherpad_lite)
 - [django](https://github.com/django/django)
 - [django-bootstrap-form](https://github.com/tzangms/django-bootstrap-form)
-
+- [netifaces](https://pypi.python.org/pypi/netifaces)
 
 ```
 
