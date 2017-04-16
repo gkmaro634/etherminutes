@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+#import socket
+import netifaces
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +27,9 @@ SECRET_KEY = 'v_oc=eot+_7(p@t4ez0$ot+d+l$t9@32u0u-fw8$x)@fet!pcg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#HOST_IP = socket.gethostbyname(socket.gethostname())
+HOST_IP = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
+ALLOWED_HOSTS = [HOST_IP]
 
 
 # Application definition
@@ -69,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'EtherMinutes.wsgi.application'
+#WSGI_APPLICATION = 'EtherMinutes.wsgi.application'
 
 
 # Database
