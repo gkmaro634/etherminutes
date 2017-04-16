@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.conf import settings
 
 from cms.models import Minutes
 from cms.forms import MinutesForm
@@ -46,7 +47,7 @@ def minutes_edit(request, minutes_id=None):
         else:
             pass
 
-        pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', ''), padID)
+        pad_url = '%s/p/%s'%(EP_CLIENT.base_url.replace('/api', '').replace('localhost', settings.HOST_IP), padID)
         minutes.minutes_url = pad_url
 
     if request.method == 'POST':
